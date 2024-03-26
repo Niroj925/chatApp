@@ -1,31 +1,17 @@
 "use client" 
 
 import React, { useState } from 'react';
-import api from './component/api/api';
-import { useRouter } from 'next/navigation';
 
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const router=useRouter();
-
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-  const data={
-      email,
-      password
-    }
-    try{
-      const response=await api.post('http://localhost:4040/user/login',data);
-      console.log(response.data);
-      if(response.status===201){
-        router.push(`/chat?id=${response.data.id}`);
-      }
+    // Validate email and password if needed
 
-    }catch(err){
-      console.log(err)
-    }
+    // Call the onLogin function with the entered email and password
+    // onLogin(email, password);
   };
 
   return (
@@ -52,7 +38,7 @@ const Page = () => {
             required 
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Page</button>
       </form>
     </div>
   );

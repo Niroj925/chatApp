@@ -39,8 +39,12 @@ const ChatComponent = () => {
     useEffect(() => {
         socket.on('message', (message) => {
           console.log(message);
-            setMessages(prevMessages => [...prevMessages, message]);
+            setMessages(message);
         });
+        socket.on('receiveMessage', (message) => {
+            console.log(message);
+              setMessages(message);
+          });
     }, []);
 
 
@@ -55,6 +59,7 @@ const ChatComponent = () => {
                 setIsRoomExist(true);
                 console.log('room:',room);
                 socket.emit('join', room); 
+
             }
         }catch(err){
             console.log('user not found');
@@ -64,7 +69,7 @@ const ChatComponent = () => {
 
     const handleSend = () => {
         if (inputMessage.trim() !== '') {
-            const message = { room, text: inputMessage };
+            const message = { sender:user1,message:inputMessage,room};
             socket.emit('createMessage', message);
             setInputMessage('');
         }
@@ -96,7 +101,7 @@ const ChatComponent = () => {
                 <div className={styles.messageContainer}>
               <div className={styles.messsage}>
                 {messages.map((msg, index) => (
-                    <p key={index}>{msg.text}</p>
+                    <p key={index}>{msg.message}</p>
                 ))}
             </div>
              <div className={styles.inputMsg}>

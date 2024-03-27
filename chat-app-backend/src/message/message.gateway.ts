@@ -1,7 +1,7 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { MessageService} from './message.service'; // Import messageService
+import { MessageService} from './message.service'; 
 
 @WebSocketGateway({
   namespace:'message',
@@ -19,16 +19,19 @@ export class MessageGateway {
     @SubscribeMessage("createMessage")
     async create(@MessageBody() createMessageDto: CreateMessageDto) {
         const message = await this.messageService.create(createMessageDto);
-        // this.server.emit('message',message);
-        this.server.to(createMessageDto.room).emit('message', message)
-        
+        // this.server.emit('message',message);//this will send for all 
+        this.server.to(createMessageDto.room).emit('message', message); 
         return message;
     }
 
    @SubscribeMessage("join")
-   joinRoom(@MessageBody() room:string,@ConnectedSocket() client:Socket){
+  async joinRoom(@MessageBody() room:string,@ConnectedSocket() client:Socket){
     client.join(room); 
     console.log(`client ${client.id} set roomName:${room}`);
     // return this.messageService.identifyClient(room,client.id);
+    const message = await this.messageService.findAll(room);
+    this.server.to(room).emit('receiveMessage', message); 
    }
+
+
 }
